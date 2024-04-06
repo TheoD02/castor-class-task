@@ -1,0 +1,12 @@
+{
+    "name": "theod02/castor-class-task",
+    "description": "Add possibility to use class and methods to expose task in castor",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Theo D",
+            "email": "theo.d02290@gmail.com"
+        }
+    ]
+}
