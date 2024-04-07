@@ -1,13 +1,17 @@
 {
-    "name": "theod02/castor-class-task",
-    "description": "Add possibility to use class and methods to expose task in castor",
-    "type": "library",
-    "license": "MIT",
-    "version": "1.0.0",
-    "authors": [
-        {
-            "name": "Theo D",
-            "email": "theo.d02290@gmail.com"
-        }
-    ]
+  "name": "theod02/castor-class-task",
+  "description": "Add possibility to use class and methods to expose task in castor",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Theo D",
+      "email": "theo.d02290@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "TheoD02\\Castor\\Classes\\": "src/"
+    }
+  }
 }
