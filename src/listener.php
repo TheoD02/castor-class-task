@@ -8,6 +8,7 @@ use Castor\Attribute\AsListener;
 use Castor\Event\AfterApplicationInitializationEvent;
 use Castor\TaskDescriptorCollection;
 
+// This is a test comment
 #[AsListener(event: AfterApplicationInitializationEvent::class)]
 function register_classes_methods_as_tasks(AfterApplicationInitializationEvent $event): void
 {
