@@ -5,25 +5,24 @@ declare(strict_types=1);
 namespace TheoD02\Castor\Classes;
 
 use Castor\Attribute\AsListener;
-use Castor\Event\AfterApplicationInitializationEvent;
-use Castor\TaskDescriptorCollection;
+use Castor\Descriptor\TaskDescriptor;
+use Castor\Event\FunctionsResolvedEvent;
 
-// This is a test comment
-#[AsListener(event: AfterApplicationInitializationEvent::class)]
-function register_classes_methods_as_tasks(AfterApplicationInitializationEvent $event): void
+#[AsListener(event: FunctionsResolvedEvent::class)]
+function register_classes_methods_as_task(FunctionsResolvedEvent $event): void
 {
     $classes = get_declared_classes();
 
     $classesMethodsDescriptor = [];
     foreach ($classes as $class) {
-        $reflectedClass = new ReflectionClass($class);
+        $reflectedClass = new \ReflectionClass($class);
         $taskClassAttributeList = $reflectedClass->getAttributes(AsTaskClass::class);
         if ($taskClassAttributeList === []) {
             continue;
         }
 
         $taskClassAttributeInstance = $taskClassAttributeList[0]->newInstance();
-        foreach ($reflectedClass->getMethods(ReflectionMethod::IS_PUBLIC) as $methodReflection) {
+        foreach ($reflectedClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $methodReflection) {
             $reflectionAttributeList = $methodReflection->getAttributes(AsTaskMethod::class);
             if ($reflectionAttributeList === []) {
                 continue;
@@ -44,19 +43,20 @@ function register_classes_methods_as_tasks(AfterApplicationInitializationEvent $
                 } else {
                     $taskMethodInstance->namespace = $reflectedClass->getShortName();
                 }
+
                 // Slugify the namespace
                 $taskMethodInstance->namespace = strtolower(
                     preg_replace('/(?<!^)[A-Z]/', '-$0', $taskMethodInstance->namespace)
                 );
             }
 
-            $functionReflection = new ReflectionFunction($methodReflection->getClosure($reflectedClass->newInstance()));
-            $classesMethodsDescriptor[] = new Castor\Descriptor\TaskDescriptor($taskMethodInstance, $functionReflection);
+            $functionReflection = new \ReflectionFunction($methodReflection->getClosure($reflectedClass->newInstance()));
+            $classesMethodsDescriptor[] = new TaskDescriptor($taskMethodInstance, $functionReflection);
         }
     }
 
-    $event->taskDescriptorCollection = new TaskDescriptorCollection(
-        [...$event->taskDescriptorCollection->taskDescriptors, ...$classesMethodsDescriptor],
-        $event->taskDescriptorCollection->symfonyTaskDescriptors
-    );
+    $event->taskDescriptors = [
+        ...$event->taskDescriptors,
+        ...$classesMethodsDescriptor
+    ];
 }
